@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CMF Buds 2a – Order Karo | Safe Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    :root {
+      --orange: #FF5E00; --orange: #ff6b00; --yellow: #ffd600;
+      --dark: #1a1a1a; --text: #2d2d2d; --off-white: #F7F7F5;
+      --green: #1a9e3f; --border: #e0e0e0; --gray: #f5f5f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Mukta', sans-serif; background: var(--off-white); color: var(--text); }
+
+    .top-bar {
+      background: linear-gradient(135deg, var(--dark), #3a1a1a);
+      color: #fff; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .back-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    .top-bar h1 { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 800; }
+
+    .security-strip {
+      background: #e8f5e9; padding: 10px 16px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--green);
+      border-bottom: 1px solid #c8e6c9;
+    }
+
+    /* ORDER SUMMARY */
+    .order-summary {
+      background: #fff; margin: 12px; border-radius: 12px;
+      padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      border: 1px solid var(--border);
+    }
+    .order-summary h3 { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 10px; color: var(--dark); }
+    .order-item { display: flex; align-items: center; gap: 12px; }
+    .order-item-img { width: 64px; height: 64px; border-radius: 8px; background: linear-gradient(135deg, #ffe0e0, #fff0f0); display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; }
+    .order-item-info { flex: 1; }
+    .order-item-name { font-weight: 700; font-size: 15px; }
+    .order-item-qty { font-size: 13px; color: #777; }
+    .order-prices { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+    .price-line { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; color: #666; }
+    .price-line.total { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 800; color: var(--dark); margin-top: 6px; border-top: 1px dashed var(--border); padding-top: 6px; }
+    .price-line .saving { color: var(--green); font-weight: 700; }
+
+    /* FORM */
+    .form-section { background: #fff; margin: 0 12px 12px; border-radius: 12px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+    .form-section h3 { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 800; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--gray); display: flex; align-items: center; gap: 8px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #555; margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 12px 14px; border: 2px solid var(--border);
+      border-radius: 10px; font-family: 'Mukta', sans-serif; font-size: 15px;
+      color: var(--text); background: #fff; transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--orange); }
+    .form-group input::placeholder { color: #bbb; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .required { color: var(--orange); }
+
+    /* PAYMENT METHOD */
+    .payment-section { background: #fff; margin: 0 12px 12px; border-radius: 12px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+    .payment-section h3 { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 800; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--gray); }
+    .payment-options { display: flex; flex-direction: column; gap: 10px; }
+    .payment-option {
+      border: 2px solid var(--border); border-radius: 12px; padding: 14px;
+      cursor: pointer; transition: border-color 0.2s, background 0.2s;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .payment-option.selected { border-color: var(--orange); background: #fff8f0; }
+    .payment-option input[type="radio"] { width: 20px; height: 20px; accent-color: var(--orange); flex-shrink: 0; }
+    .payment-option-icon { font-size: 28px; }
+    .payment-option-info { flex: 1; }
+    .payment-option-title { font-weight: 700; font-size: 15px; color: var(--dark); }
+    .payment-option-desc { font-size: 12px; color: #888; margin-top: 2px; }
+    .payment-badge { background: var(--green); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
+
+    /* PLACE ORDER BUTTON */
+    .checkout-bottom { padding: 16px; background: rgba(255,248,240,0.97); backdrop-filter: blur(8px); }
+    .place-order-btn {
+      display: block; width: 100%; padding: 18px;
+      background: linear-gradient(135deg, var(--green), #2ecc71);
+      color: #fff; font-family: 'Rajdhani', sans-serif;
+      font-size: 20px; font-weight: 800; text-align: center;
+      border: none; border-radius: 12px; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(26,158,63,0.4);
+      transition: transform 0.15s; position: relative; overflow: hidden;
+    }
+    .place-order-btn:active { transform: scale(0.98); }
+    .place-order-btn:disabled { background: #aaa; box-shadow: none; cursor: not-allowed; }
+    .place-order-btn::after { content: ''; position: absolute; top: -50%; left: -60%; width: 40%; height: 200%; background: rgba(255,255,255,0.15); transform: skewX(-20deg); animation: shine 2.5s infinite; }
+    @keyframes shine { 0%{left:-60%} 100%{left:140%} }
+    .checkout-trust { display: flex; justify-content: center; gap: 16px; margin-top: 10px; }
+    .trust-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #888; }
+
+    /* LOADER */
+    .loader-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+    .loader-overlay.show { display: flex; }
+    .spinner { width: 48px; height: 48px; border: 5px solid rgba(255,255,255,0.2); border-top-color: var(--yellow); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .loader-text { color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; }
+
+    /* ERROR/TOAST */
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 99999; opacity: 0; transition: opacity 0.3s; pointer-events: none; text-align: center; max-width: 320px; width: 90%; }
+    .toast.show { opacity: 1; }
+    .toast.error { border-left: 4px solid var(--orange); }
+    .toast.success { border-left: 4px solid var(--green); }
+
+    .field-error { color: var(--orange); font-size: 12px; margin-top: 3px; display: none; }
+    .form-group.has-error input { border-color: var(--orange); }
+    .form-group.has-error .field-error { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loader-text" id="loaderText">Order process ho rahi hai...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">← Back</button>
+  <h1>🔒 Secure Checkout</h1>
+</div>
+
+<!-- SECURITY STRIP -->
+<div class="security-strip">
+  <span>🔐</span> 256-bit SSL Encrypted · Your data is safe
+</div>
+
+<!-- ORDER SUMMARY -->
+<div class="order-summary">
+  <h3>📦 Order Summary</h3>
+  <div class="order-item">
+    <div class="order-item-img" style="font-size:28px;background:linear-gradient(135deg,#ffe0cc,#fff0e8)">🎧</div>
+    <div class="order-item-info">
+      <div class="order-item-name">CMF Buds 2a by Nothing</div>
+      <div class="order-item-qty">Qty: 1 · 🎨 Random Colour (Black/White/Orange)</div>
+    </div>
+  </div>
+  <div class="order-prices">
+    <div class="price-line"><span>MRP Price</span><span><s>₹2,199</s></span></div>
+    <div class="price-line"><span>Discount (64% OFF)</span><span class="saving">-₹1,400</span></div>
+    <div class="price-line"><span>Delivery</span><span class="saving">FREE 🎉</span></div>
+    <div class="price-line total"><span>Total Payable</span><span>₹799</span></div>
+  </div>
+</div>
+
+<!-- DELIVERY FORM -->
+<div class="form-section">
+  <h3>📋 Delivery Details</h3>
+
+  <div class="form-group" id="grp-name">
+    <label>Full Name <span class="required">*</span></label>
+    <input type="text" id="f-name" placeholder="Apna poora naam likho" autocomplete="name"/>
+    <div class="field-error">Naam zaroori hai</div>
+  </div>
+
+  <div class="form-group" id="grp-phone">
+    <label>Mobile Number <span class="required">*</span></label>
+    <input type="tel" id="f-phone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel"/>
+    <div class="field-error">Valid 10-digit number daalo</div>
+  </div>
+
+  <div class="form-group" id="grp-addr1">
+    <label>Address Line 1 <span class="required">*</span></label>
+    <input type="text" id="f-addr1" placeholder="Ghar no., Building, Street..." autocomplete="address-line1"/>
+    <div class="field-error">Address zaroori hai</div>
+  </div>
+
+  <div class="form-group">
+    <label>Address Line 2</label>
+    <input type="text" id="f-addr2" placeholder="Landmark, Area (optional)" autocomplete="address-line2"/>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group" id="grp-pin">
+      <label>Pincode <span class="required">*</span></label>
+      <input type="tel" id="f-pin" placeholder="6-digit pincode" maxlength="6" oninput="fetchCityState(this.value)"/>
+      <div class="field-error">Valid pincode daalo</div>
+    </div>
+    <div class="form-group" id="grp-city">
+      <label>City <span class="required">*</span></label>
+      <input type="text" id="f-city" placeholder="City" autocomplete="address-level2"/>
+      <div class="field-error">City daalo</div>
+    </div>
+  </div>
+
+  <div class="form-group" id="grp-state">
+    <label>State <span class="required">*</span></label>
+    <select id="f-state">
+      <option value="">Select State</option>
+      <option>Andhra Pradesh</option><option>Arunachal Pradesh</option>
+      <option>Assam</option><option>Bihar</option><option>Chhattisgarh</option>
+      <option>Goa</option><option>Gujarat</option><option>Haryana</option>
+      <option>Himachal Pradesh</option><option>Jharkhand</option><option>Karnataka</option>
+      <option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option>
+      <option>Manipur</option><option>Meghalaya</option><option>Mizoram</option>
+      <option>Nagaland</option><option>Odisha</option><option>Punjab</option>
+      <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option>
+      <option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option>
+      <option>Uttarakhand</option><option>West Bengal</option>
+      <option>Delhi</option><option>Jammu & Kashmir</option><option>Ladakh</option>
+      <option>Chandigarh</option><option>Puducherry</option>
+    </select>
+    <div class="field-error">State select karo</div>
+  </div>
+</div>
+
+<!-- PAYMENT METHOD -->
+<div class="payment-section">
+  <h3>💳 Payment Method</h3>
+  <div class="payment-options">
+    <div class="payment-option selected" onclick="selectPayment('cod', this)">
+      <input type="radio" name="payment" value="cod" checked/>
+      <span class="payment-option-icon">💵</span>
+      <div class="payment-option-info">
+        <div class="payment-option-title">Cash on Delivery (COD)</div>
+        <div class="payment-option-desc">Delivery pe cash dena hoga</div>
+        <span class="payment-badge">🏆 Most Popular</span>
+      </div>
+    </div>
+    <div class="payment-option" onclick="selectPayment('prepaid', this)">
+      <input type="radio" name="payment" value="prepaid"/>
+      <span class="payment-option-icon">📱</span>
+      <div class="payment-option-info">
+        <div class="payment-option-title">Prepaid (UPI / Card / NetBanking)</div>
+        <div class="payment-option-desc">Razorpay se secure payment karo</div>
+        <span class="payment-badge" style="background:#1565c0;">⚡ Instant Confirm</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLACE ORDER -->
+<div class="checkout-bottom">
+  <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
+    ✅ ORDER PLACE KARO — ₹799
+  </button>
+  <div class="checkout-trust">
+    <div class="trust-item">🔒 Secure</div>
+    <div class="trust-item">🚚 Free Delivery</div>
+    <div class="trust-item">✅ COD Available</div>
+  </div>
+</div>
+
+<!-- SUPABASE CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://blrsnfmljaycubcysbfw.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJscnNuZm1samF5Y3ViY3lzYmZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNjcxMDcsImV4cCI6MjA4ODg0MzEwN30.d_oh9H-GMJ5M0wiEDonuVrJQSKqCGPToeuaIDNohIxs';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // RAZORPAY KEY — apna key daalo yahan
+  const RAZORPAY_KEY = 'rzp_live_XXXXXXXXXXXXXXXX'; // <-- Replace with your Razorpay live key
+
+  let selectedPayment = 'cod';
+
+  function selectPayment(type, el) {
+    selectedPayment = type;
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+  }
+
+  // AUTO FILL CITY/STATE FROM PINCODE
+  async function fetchCityState(pin) {
+    if (pin.length === 6) {
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        const data = await res.json();
+        if (data[0].Status === 'Success') {
+          const po = data[0].PostOffice[0];
+          document.getElementById('f-city').value = po.District;
+          const state = document.getElementById('f-state');
+          for (let i = 0; i < state.options.length; i++) {
+            if (state.options[i].value.toLowerCase() === po.State.toLowerCase()) {
+              state.selectedIndex = i; break;
+            }
+          }
+        }
+      } catch(e) {}
+    }
+  }
+
+  // FORM VALIDATION
+  function validate() {
+    let ok = true;
+    const fields = [
+      { id: 'f-name', grp: 'grp-name', check: v => v.trim().length > 1 },
+      { id: 'f-phone', grp: 'grp-phone', check: v => /^[6-9]\d{9}$/.test(v.trim()) },
+      { id: 'f-addr1', grp: 'grp-addr1', check: v => v.trim().length > 5 },
+      { id: 'f-pin', grp: 'grp-pin', check: v => /^\d{6}$/.test(v.trim()) },
+      { id: 'f-city', grp: 'grp-city', check: v => v.trim().length > 1 },
+      { id: 'f-state', grp: 'grp-state', check: v => v !== '' },
+    ];
+    fields.forEach(f => {
+      const val = document.getElementById(f.id).value;
+      const grp = document.getElementById(f.grp);
+      if (!f.check(val)) { grp.classList.add('has-error'); ok = false; }
+      else { grp.classList.remove('has-error'); }
+    });
+    return ok;
+  }
+
+  function showToast(msg, type = 'error') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function showLoader(text = 'Order process ho rahi hai...') {
+    document.getElementById('loaderText').textContent = text;
+    document.getElementById('loader').classList.add('show');
+  }
+  function hideLoader() { document.getElementById('loader').classList.remove('show'); }
+
+  function getOrderData(paymentMethod, paymentStatus = 'pending', paymentId = null) {
+    return {
+      customer_name: document.getElementById('f-name').value.trim(),
+      phone: document.getElementById('f-phone').value.trim(),
+      address_line1: document.getElementById('f-addr1').value.trim(),
+      address_line2: document.getElementById('f-addr2').value.trim(),
+      pincode: document.getElementById('f-pin').value.trim(),
+      city: document.getElementById('f-city').value.trim(),
+      state: document.getElementById('f-state').value,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus,
+      payment_id: paymentId,
+      amount: 799,
+      product_name: 'CMF Buds 2a by Nothing', // <-- apna product name daalo
+      status: 'new',
+      created_at: new Date().toISOString()
+    };
+  }
+
+  async function saveToSupabase(orderData) {
+    const { data, error } = await supabase.from('orders').insert([orderData]).select();
+    if (error) throw error;
+    return data[0];
+  }
+
+  async function placeOrder() {
+    if (!validate()) {
+      showToast('⚠️ Sabhi zaroori fields fill karo!');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+      return;
+    }
+
+    const btn = document.getElementById('placeOrderBtn');
+    btn.disabled = true;
+
+    if (selectedPayment === 'cod') {
+      // COD ORDER
+      showLoader('COD order save ho rahi hai...');
+      try {
+        const orderData = getOrderData('COD', 'pending');
+        const saved = await saveToSupabase(orderData);
+        hideLoader();
+        // Store order ID for confirmation page
+        sessionStorage.setItem('lastOrderId', saved.id || 'ORD' + Date.now());
+        sessionStorage.setItem('lastOrderName', orderData.customer_name);
+        window.location.href = 'thankyou.html';
+      } catch (err) {
+        hideLoader();
+        btn.disabled = false;
+        showToast('❌ Kuch error aaya. Dobara try karo!');
+        console.error(err);
+      }
+
+    } else {
+      // RAZORPAY PREPAID
+      const options = {
+        key: RAZORPAY_KEY,
+        amount: 79900, // paise mein (799 * 100)
+        currency: 'INR',
+        name: 'CMF Store', // <-- apna brand name
+        description: 'CMF Buds 2a by Nothing', // <-- product name
+        image: '', // <-- logo URL (optional)
+        prefill: {
+          name: document.getElementById('f-name').value.trim(),
+          contact: document.getElementById('f-phone').value.trim(),
+        },
+        theme: { color: '#e8130a' },
+        handler: async function(response) {
+          showLoader('Payment verify ho rahi hai...');
+          try {
+            const orderData = getOrderData('Prepaid', 'paid', response.razorpay_payment_id);
+            const saved = await saveToSupabase(orderData);
+            hideLoader();
+            sessionStorage.setItem('lastOrderId', saved.id || 'ORD' + Date.now());
+            sessionStorage.setItem('lastOrderName', orderData.customer_name);
+            window.location.href = 'thankyou.html';
+          } catch(err) {
+            hideLoader();
+            btn.disabled = false;
+            showToast('Order save nahi hui, support se contact karo');
+          }
+        },
+        modal: {
+          ondismiss: function() { btn.disabled = false; }
+        }
+      };
+      try {
+        const rzp = new Razorpay(options);
+        rzp.open();
+      } catch(e) {
+        showToast('Razorpay load nahi hua. Refresh karo ya COD choose karo.');
+        btn.disabled = false;
+      }
+    }
+  }
+</script>
+</body>
+</html>
