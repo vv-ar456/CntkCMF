@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <script>
+    // GitHub Pages clean URL redirect trick
+    // Redirects /checkout → /checkout/ → loads checkout/index.html
+    var path = window.location.pathname;
+    var search = window.location.search;
+    var hash = window.location.hash;
+    if (path !== '/') {
+      window.location.replace(
+        window.location.origin + path + (path.endsWith('/') ? '' : '/') + search + hash
+      );
+    } else {
+      window.location.replace(window.location.origin + '/');
+    }
+  </script>
+</head>
+<body></body>
+</html>
