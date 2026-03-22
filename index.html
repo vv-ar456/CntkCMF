@@ -419,11 +419,14 @@
 </div>
 
 <!-- BOTTOM ACTION MENU -->
-<a href="checkout.html">
-  <button class="menu-toggle-btn">
-    🛒 ORDER NOW — ONLY ₹999
-  </button>
-</a>
+<div class="action-menu-wrap" id="actionMenuWrap">
+  <div class="action-menu-dropdown" id="actionMenuDropdown">
+    <a href="checkout.html" class="amd-item">
+      <div class="amd-icon blue">🛒</div>
+      <div class="amd-text-wrap">
+        <span>Order Now — Only ₹999</span>
+        <span class="amd-sub">Free Delivery · COD Available</span>
+      </div>
     </a>
     <a href="track.html" class="amd-item">
       <div class="amd-icon green">📦</div>
@@ -675,6 +678,14 @@
     document.getElementById('sideMenu').classList.remove('open');
     document.getElementById('menuOverlay').classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  // ACTION MENU TOGGLE
+  function toggleActionMenu() {
+    const dd  = document.getElementById('actionMenuDropdown');
+    const chv = document.getElementById('menuChevron');
+    const isOpen = dd.classList.toggle('open');
+    chv.classList.toggle('up', isOpen);
   }
   document.addEventListener('click', function(e) {
     const wrap = document.getElementById('actionMenuWrap');
