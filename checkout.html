@@ -175,6 +175,8 @@
 <script>
   const SUPABASE_URL = 'https://blrsnfmljaycubcysbfw.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJscnNuZm1samF5Y3ViY3lzYmZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNjcxMDcsImV4cCI6MjA4ODg0MzEwN30.d_oh9H-GMJ5M0wiEDonuVrJQSKqCGPToeuaIDNohIxs';
+  // Capture referral code from URL e.g. ?ref=CNT12345
+  const REF_CODE = new URLSearchParams(window.location.search).get('ref') || null;
   const RAZORPAY_KEY = 'rzp_live_SSegtOEGykPOUN';
 
   let sbClient = null;
@@ -315,6 +317,7 @@
       product_name:   'Portable Dual Fan Cooler',
       status:         'new',
       buyer_ip:       buyerIP,
+      ref_code:       REF_CODE,
       created_at:     new Date().toISOString()
     };
   }

@@ -241,8 +241,6 @@
 
   </style>
 </head>
-<!-- Adsterra Social Bar -->
-<script src="https://pl28948358.profitablecpmratenetwork.com/1a/8e/11/1a8e11e3113ddf8168930802d6e808a2.js"></script>
 <body>
 
 <div class="urgency-bar">
@@ -271,6 +269,7 @@
     <a href="index.html" class="side-menu-item">🏠 &nbsp;Home</a>
     <a href="checkout.html" class="side-menu-item smi-highlight">🛒 &nbsp;Buy Now — ₹999</a>
     <a href="track.html" class="side-menu-item">📦 &nbsp;Track My Order</a>
+    <a href="referral.html" class="side-menu-item" style="color:#FFD600">💰 &nbsp;Refer & Earn</a>
   </div>
   <div class="side-menu-footer">© 2025 Conitek</div>
 </div>
@@ -420,10 +419,27 @@
 </div>
 
 <!-- BOTTOM ACTION MENU -->
-<div class="action-menu-wrap">
-  <a href="checkout.html" class="menu-toggle-btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px">
+<div class="action-menu-wrap" id="actionMenuWrap">
+  <div class="action-menu-dropdown" id="actionMenuDropdown">
+    <a href="checkout.html" class="amd-item">
+      <div class="amd-icon blue">🛒</div>
+      <div class="amd-text-wrap">
+        <span>Order Now — Only ₹999</span>
+        <span class="amd-sub">Free Delivery · COD Available</span>
+      </div>
+    </a>
+    <a href="track.html" class="amd-item">
+      <div class="amd-icon green">📦</div>
+      <div class="amd-text-wrap">
+        <span>Track My Order</span>
+        <span class="amd-sub">OTP verification required</span>
+      </div>
+    </a>
+  </div>
+  <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleActionMenu()">
     <span>🛒 ORDER NOW — ONLY ₹999</span>
-  </a>
+    <span class="menu-chevron" id="menuChevron">▲</span>
+  </button>
   <div class="bsub">🔒 Secure &nbsp;|&nbsp; <strong>COD Available</strong> &nbsp;|&nbsp; Free Delivery</div>
 </div>
 
@@ -575,20 +591,6 @@
   </div>
 </div>
 
-<!-- Adsterra Banner -->
-<div style="display:flex;justify-content:center;margin:12px 0">
-  <script>
-    atOptions = {
-      'key' : '9c85b9ce0aa31519169868638d2edb93',
-      'format' : 'iframe',
-      'height' : 300,
-      'width' : 160,
-      'params' : {}
-    };
-  </script>
-  <script src="https://www.highperformanceformat.com/9c85b9ce0aa31519169868638d2edb93/invoke.js"></script>
-</div>
-
 <!-- FINAL CTA -->
 <div class="fcta">
   <p>⚠️ SUMMER STOCK RUNNING LOW — ORDER NOW</p>
@@ -679,7 +681,20 @@
   }
 
   // ACTION MENU TOGGLE
-
+  function toggleActionMenu() {
+    const dd  = document.getElementById('actionMenuDropdown');
+    const chv = document.getElementById('menuChevron');
+    const isOpen = dd.classList.toggle('open');
+    chv.classList.toggle('up', isOpen);
+  }
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('actionMenuWrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('actionMenuDropdown').classList.remove('open');
+      const chv = document.getElementById('menuChevron');
+      if(chv) chv.classList.remove('up');
+    }
+  });
 </script>
 </body>
 </html>
