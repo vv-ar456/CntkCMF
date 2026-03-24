@@ -85,7 +85,7 @@
   <div class="order-card-body">
     <div class="info-row"><span class="info-label">Product</span><span class="info-value">Portable Dual Fan Cooler</span></div>
     <div class="info-row"><span class="info-label">Quantity</span><span class="info-value" id="orderQty">1 piece</span></div>
-    <div class="info-row"><span class="info-label">Amount Paid</span><span class="info-value" id="amountPaid">₹999</span></div>
+    <div class="info-row"><span class="info-label">Amount Paid</span><span class="info-value" id="amountPaid">₹1299</span></div>
     <div class="info-row"><span class="info-label">Delivery</span><span class="info-value" style="color:var(--green)">FREE 🎉</span></div>
     <div class="info-row"><span class="info-label">Payment</span><span class="info-value"><span id="paymentBadge" class="cod-badge">💵 Cash on Delivery</span></span></div>
     <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="status-badge">✅ Confirmed</span></span></div>
@@ -148,14 +148,14 @@
 
 <footer>
   © 2025 <strong>Conitek</strong> · Your Trusted Online Store<br/>
-  <span style="font-size:11px">Support: 📞 +91-XXXXXXXXXX</span>
+  <span style="font-size:11px">Support: 📞 +91-7606991266</span>
 </footer>
 
 <script>
   const orderId = sessionStorage.getItem('lastOrderId') || 'ORD' + Math.floor(Math.random()*900000+100000);
   const orderName = sessionStorage.getItem('lastOrderName') || 'Customer';
   document.getElementById('orderIdDisplay').textContent = '#' + orderId;
-  const paidAmt = sessionStorage.getItem('lastOrderAmt') || '₹999';
+  const paidAmt = sessionStorage.getItem('lastOrderAmt') || '₹1299';
   const orderQty = sessionStorage.getItem('lastOrderQty') || '1';
   document.getElementById('orderQty').textContent = orderQty + (orderQty === '1' ? ' piece' : ' pieces');
   const payMethod = sessionStorage.getItem('lastPayMethod') || 'COD';
@@ -194,7 +194,7 @@
   requestAnimationFrame(animateConfetti);
 
   const SHARE_URL = 'https://vv-ar456.github.io/CntkCMF/';
-  const SHARE_MSG = '❄️ Beat the heat this summer! Portable Dual Fan Cooler + Mist A/C at just ₹999 🔥 (Pay online → get ₹150 OFF!) Free Shipping! Check it out: ' + SHARE_URL;
+  const SHARE_MSG = '❄️ Beat the heat this summer! Portable Dual Fan Cooler + Mist A/C at just ₹1299 🔥 (Pay online → get ₹250 OFF!) Free Shipping! Check it out: ' + SHARE_URL;
 
   function shareWhatsApp() {
     window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_MSG), '_blank');
