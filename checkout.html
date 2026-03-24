@@ -110,17 +110,17 @@
   </div>
 </div>
 <div class="qty-total-line" id="qtyTotalLine">
-  <span>1 × ₹1299 (COD price)</span>
-  <strong id="qtyTotalAmt">₹1299</strong>
+  <span>1 × ₹999 (COD price)</span>
+  <strong id="qtyTotalAmt">₹999</strong>
 </div>
 
 <div class="order-summary" style="margin-top:0">
   <div class="order-prices" style="margin-top:0;border-top:none;padding-top:0">
-    <div class="price-line"><span>MRP</span><span id="mrpLine"><s>₹2,599</s></span></div>
-    <div class="price-line"><span>Discount (<span id="discPct">50</span>% OFF)</span><span class="saving" id="discAmt">− ₹1,300</span></div>
+    <div class="price-line"><span>MRP</span><span id="mrpLine"><s>₹1,999</s></span></div>
+    <div class="price-line"><span>Discount (<span id="discPct">50</span>% OFF)</span><span class="saving" id="discAmt">− ₹1,000</span></div>
     <div class="price-line"><span>Delivery</span><span class="saving">FREE 🎉</span></div>
-    <div class="price-line prepaid-disc" id="prepaidDiscLine" style="display:none"><span>💳 Online Pay Discount</span><span class="saving" id="prepaidDiscAmt">− ₹250</span></div>
-    <div class="price-line total"><span>Total Payable</span><span id="totalAmt">₹1299</span></div>
+    <div class="price-line prepaid-disc" id="prepaidDiscLine" style="display:none"><span>💳 Online Pay Discount</span><span class="saving" id="prepaidDiscAmt">− ₹150</span></div>
+    <div class="price-line total"><span>Total Payable</span><span id="totalAmt">₹999</span></div>
   </div>
 </div>
 <div class="form-section">
@@ -161,13 +161,13 @@
 <div class="prepaid-saving-badge" id="prepaidBadge" style="display:none;margin:0 12px 12px">
   <div class="psb-icon">🎉</div>
   <div class="psb-text">
-    <strong>You save ₹250 extra!</strong>
-    <span>Online payment discount applied → ₹1049 total</span>
+    <strong>You save ₹150 extra!</strong>
+    <span>Online payment discount applied → ₹849 total</span>
   </div>
-  <div class="psb-amount">−₹250</div>
+  <div class="psb-amount">−₹150</div>
 </div>
 <div class="checkout-bottom">
-  <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">✅ PLACE ORDER — <span id="btnAmt">₹1299</span></button>
+  <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">✅ PLACE ORDER — <span id="btnAmt">₹999</span></button>
   <div class="checkout-trust"><div class="trust-item">🔒 Secure</div><div class="trust-item">🚚 Free Delivery</div><div class="trust-item">✅ COD Available</div></div>
 </div>
 
@@ -175,17 +175,15 @@
 <script>
   const SUPABASE_URL = 'https://blrsnfmljaycubcysbfw.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJscnNuZm1samF5Y3ViY3lzYmZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNjcxMDcsImV4cCI6MjA4ODg0MzEwN30.d_oh9H-GMJ5M0wiEDonuVrJQSKqCGPToeuaIDNohIxs';
-  // Capture referral code from URL e.g. ?ref=CNT12345
-  const REF_CODE = new URLSearchParams(window.location.search).get('ref') || null;
   const RAZORPAY_KEY = 'rzp_live_SSegtOEGykPOUN';
 
   let sbClient = null;
   try { sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
 
-  const BASE_PRICE = 1299;       // COD price per piece
-  const PREPAID_DISC = 250;     // discount per piece for prepaid
-  const PREPAID_PRICE = BASE_PRICE - PREPAID_DISC;  // 1049 per piece
-  const MRP = 2599;
+  const BASE_PRICE = 999;       // COD price per piece
+  const PREPAID_DISC = 150;     // discount per piece for prepaid
+  const PREPAID_PRICE = BASE_PRICE - PREPAID_DISC;  // 849 per piece
+  const MRP = 1999;
   let selectedPayment = 'cod';
   let qty = 1;
 
@@ -317,7 +315,6 @@
       product_name:   'Portable Dual Fan Cooler',
       status:         'new',
       buyer_ip:       buyerIP,
-      ref_code:       REF_CODE,
       created_at:     new Date().toISOString()
     };
   }

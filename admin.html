@@ -352,8 +352,6 @@
     <div class="tab" id="tab-dispatched" onclick="switchTab('dispatched')">🚚 Dispatched <span class="tab-count" id="cnt-dispatched">0</span></div>
     <div class="tab" id="tab-delivered" onclick="switchTab('delivered')">✅ Delivered <span class="tab-count" id="cnt-delivered">0</span></div>
     <div class="tab" id="tab-cancelled" onclick="switchTab('cancelled')">❌ Cancelled <span class="tab-count" id="cnt-cancelled">0</span></div>
-    <div class="tab" id="tab-referral" onclick="switchTab('referral')">💰 Referrals <span class="tab-count" id="cnt-referral">0</span></div>
-    <div class="tab" id="tab-withdrawals" onclick="switchTab('withdrawals')">💸 Withdrawals <span class="tab-count" id="cnt-withdrawals">0</span></div>
     <div class="tab" id="tab-earnings" onclick="switchTab('earnings')">💰 Earnings</div>
     <div class="tab" id="tab-all" onclick="switchTab('all')">📋 All Orders</div>
     <div class="tab" id="tab-activity" onclick="switchTab('activity')">👤 Activity Log</div>
@@ -410,19 +408,6 @@
     <div class="tab-content" id="content-cancelled">
       <div class="section-header"><div class="section-title">❌ Cancelled Orders</div></div>
       <div id="list-cancelled"></div>
-    </div>
-
-    <!-- REFERRAL ORDERS TAB -->
-    <div class="tab-content" id="content-referral">
-      <div class="section-header"><div class="section-title">💰 Referral Orders</div></div>
-      <div id="list-referral-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px"></div>
-      <div id="list-referral"></div>
-    </div>
-
-    <!-- WITHDRAWALS TAB -->
-    <div class="tab-content" id="content-withdrawals">
-      <div class="section-header"><div class="section-title">💸 Withdrawal Requests</div></div>
-      <div id="list-withdrawals"></div>
     </div>
 
     <!-- EARNINGS TAB -->
@@ -685,96 +670,12 @@
         : emptyState('No orders yet');
       return;
     }
-    if (tab === 'earnings')    { renderEarnings(); return; }
-    if (tab === 'activity')    { loadLogs(); return; }
-    if (tab === 'referral')    { loadReferralTab(); return; }
-    if (tab === 'withdrawals') { loadWithdrawalsTab(); return; }
+    if (tab === 'earnings')  { renderEarnings(); return; }
+    if (tab === 'activity')  { loadLogs(); return; }
 
     const filtered = tab === 'all' ? allOrders : allOrders.filter(o=>o.status===tab);
     const el = document.getElementById('list-'+tab);
     if (el) el.innerHTML = filtered.length ? filtered.map(o=>orderCard(o)).join('') : emptyState('No orders in this category');
-  }
-
-  // ── REFERRAL TAB ──
-  async function loadReferralTab() {
-    const el = document.getElementById('list-referral');
-    const statsEl = document.getElementById('list-referral-stats');
-    el.innerHTML = '<div class="empty-state"><p>Loading...</p></div>';
-    try {
-      // Get all referral orders (orders with ref_code)
-      const { data: refOrders } = await sb.from('orders')
-        .select('id,customer_name,quantity,amount,status,ref_code,created_at,city')
-        .not('ref_code', 'is', null)
-        .order('created_at', { ascending: false });
-
-      const valid = (refOrders||[]).filter(o=>o.status!=='cancelled');
-      const totalPieces = valid.reduce((s,o)=>s+(o.quantity||1),0);
-      const totalCommission = totalPieces * 100;
-
-      // Update tab count
-      document.getElementById('cnt-referral').textContent = (refOrders||[]).length;
-
-      statsEl.innerHTML = `
-        <div class="earn-card"><div class="earn-val" style="color:#FFD600">₹${totalCommission.toLocaleString('en-IN')}</div><div class="earn-label">Total Commission Due</div></div>
-        <div class="earn-card"><div class="earn-val">${(refOrders||[]).length}</div><div class="earn-label">Total Referral Orders</div></div>
-        <div class="earn-card"><div class="earn-val">${valid.length}</div><div class="earn-label">Successful Orders</div></div>
-        <div class="earn-card"><div class="earn-val">${totalPieces}</div><div class="earn-label">Total Pieces Sold</div></div>`;
-
-      if(!(refOrders||[]).length) { el.innerHTML = emptyState('Koi referral order nahi abhi tak'); return; }
-
-      el.innerHTML = (refOrders||[]).map(o => {
-        const commission = (o.quantity||1) * 100;
-        const isCancelled = o.status === 'cancelled';
-        return `<div class="order-row" style="${isCancelled?'opacity:0.5':''}">
-          <div>
-            <div class="name">${escHtml(o.customer_name||'—')} <span style="opacity:.5;font-size:11px">#${o.id}</span></div>
-            <div class="time">${timeAgo(o.created_at)} · ${escHtml(o.city||'')} · Ref: <strong style="color:#FFD600">${escHtml(o.ref_code)}</strong></div>
-            <div class="time">Qty: ${o.quantity||1} pcs · ₹${(o.amount||0).toLocaleString('en-IN')}</div>
-          </div>
-          <div class="amt" style="color:${isCancelled?'var(--red)':'#FFD600'}">${isCancelled?'Cancelled':'+₹'+commission}</div>
-        </div>`;
-      }).join('');
-    } catch(e) {
-      el.innerHTML = emptyState('Error loading referral orders');
-    }
-  }
-
-  // ── WITHDRAWALS TAB ──
-  async function loadWithdrawalsTab() {
-    const el = document.getElementById('list-withdrawals');
-    el.innerHTML = '<div class="empty-state"><p>Loading...</p></div>';
-    try {
-      const { data: reqs } = await sb.from('withdrawal_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      document.getElementById('cnt-withdrawals').textContent = (reqs||[]).filter(r=>r.status==='pending').length;
-
-      if(!(reqs||[]).length) { el.innerHTML = emptyState('Koi withdrawal request nahi abhi tak'); return; }
-
-      el.innerHTML = (reqs||[]).map(r => `
-        <div class="order-row">
-          <div style="flex:1">
-            <div class="name">${escHtml(r.user_name||'—')} · 📞 ${escHtml(r.phone||'')}</div>
-            <div class="time">${timeAgo(r.created_at)} · Status: <strong style="color:${r.status==='pending'?'#FFD600':r.status==='approved'?'var(--green)':'var(--red)'}">${r.status.toUpperCase()}</strong></div>
-            <div class="time">${r.upi_id ? '💳 UPI: '+escHtml(r.upi_id) : r.bank_account ? '🏦 A/C: '+escHtml(r.bank_account)+' · IFSC: '+escHtml(r.ifsc_code||'') : 'No payment details'}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-            <div class="amt">₹${(r.amount||0).toLocaleString('en-IN')}</div>
-            ${r.status==='pending' ? `
-              <button onclick="updateWithdrawal('${r.id}','approved')" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer">✅ Approve</button>
-              <button onclick="updateWithdrawal('${r.id}','rejected')" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer">❌ Reject</button>
-            ` : ''}
-          </div>
-        </div>`).join('');
-    } catch(e) {
-      el.innerHTML = emptyState('Error loading withdrawal requests');
-    }
-  }
-
-  async function updateWithdrawal(id, status) {
-    await sb.from('withdrawal_requests').update({ status }).eq('id', id);
-    loadWithdrawalsTab();
   }
 
   function renderEarnings() {
